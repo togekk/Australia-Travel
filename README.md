@@ -4,7 +4,7 @@
 
 ### Language
 
-* **Javascript**
+* **Javascript ES7**
 * **HTML5**
 * **CSS3**
 

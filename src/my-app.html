@@ -60,7 +60,7 @@ Traveling
       }
 
       .text {
-        padding: 10% 3% 3% 3%;
+        /*padding: 10% 3% 3% 3%;*/
         line-height: 7vh;
         color: #FFFFFF;
         display: flex;
@@ -155,7 +155,7 @@ Traveling
 
   	<div class="text text_fadeout">
 
-      <div class="bleed"></div>
+      <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
 
   		<div class="content">
   			<h2 class="switch">22.03.2013
@@ -223,7 +223,7 @@ Traveling
   			</p>
   		</div>
 
-      <div class="bleed"></div>
+      <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
 
   	</div>
 
@@ -234,15 +234,14 @@ Traveling
         'use strict';
 
         class scrollControl extends HTMLElement {
+
             beforeRegister() {
                 this.is = 'my-app';
                 this.properties = {
-                    prop1: {
-                        type: String,
-                        value: 'Simon',
-                    }
+
                 }
             }
+
             ready() {
                 // init controller
                 const controller = new ScrollMagic.Controller();
@@ -250,8 +249,7 @@ Traveling
                     '.fadein');
                 const slides = Polymer.dom(this.root).querySelectorAll(
                     '.switch');
-                console.log(slides);
-                console.log(Polymer.dom(this.root).querySelector('.switch'));
+
                 new ScrollMagic.Scene({
                         offset: 1
                     })
@@ -300,12 +298,45 @@ Traveling
                     })
                     .setPin(this.$$('.pin_point'))
                     .addTo(controller); // assign the scene to the controller
+
             }
 
-          }
+            onHovered() {
 
-          Polymer(scrollControl);
+                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
+                    '.text_fadeout');
+                for (let text_fadeout of text_fadeout_all) {
+                    TweenMax.to(text_fadeout, .4, {
+                        opacity: 0.1,
+                    })
+                }
+                TweenMax.to(this.$$('.filter'), .4, {
+                    opacity: 0,
+                });
+
+            }
+
+            onUnhovered() {
+
+                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
+                    '.text_fadeout')
+                for (let text_fadeout of text_fadeout_all) {
+                    TweenMax.to(text_fadeout, .4, {
+                        opacity: 1,
+                    })
+                }
+                TweenMax.to(this.$$('.filter'), .4, {
+                    opacity: 1,
+                })
+
+            }
 
 
+        }
+
+        Polymer(scrollControl);
     </script>
+</dom-module>
+} } Polymer(scrollControl);
+</script>
 </dom-module>
