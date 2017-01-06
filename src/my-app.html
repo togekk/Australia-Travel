@@ -233,11 +233,17 @@ Traveling
     <script>
         'use strict';
 
-        Polymer({
-            is: 'my-app',
-
-            ready: function() {
-
+        class scrollControl extends HTMLElement {
+            beforeRegister() {
+                this.is = 'my-app';
+                this.properties = {
+                    prop1: {
+                        type: String,
+                        value: 'Simon',
+                    }
+                }
+            }
+            ready() {
                 // init controller
                 const controller = new ScrollMagic.Controller();
                 const text_fadein = Polymer.dom(this.root).querySelectorAll(
@@ -246,7 +252,6 @@ Traveling
                     '.switch');
                 console.log(slides);
                 console.log(Polymer.dom(this.root).querySelector('.switch'));
-
                 new ScrollMagic.Scene({
                         offset: 1
                     })
@@ -256,7 +261,6 @@ Traveling
                             opacity: 0
                         })
                     .addTo(controller); // assign the scene to the controller
-
                 for (let i = 0; i < text_fadein.length; i++) {
                     new ScrollMagic.Scene({
                             duration: 1000,
@@ -267,7 +271,6 @@ Traveling
                         })
                         .addTo(controller); // assign the scene to the controller
                 };
-
                 new ScrollMagic.Scene({
                         triggerElement: this.$$('.content'),
                     })
@@ -276,9 +279,7 @@ Traveling
                             opacity: 0
                         })
                     .addTo(controller); // assign the scene to the controller
-
                 let j = 1;
-
                 for (let slide of slides) {
                     // create a scene
                     new ScrollMagic.Scene({
@@ -290,10 +291,8 @@ Traveling
                             opacity: 0
                         }) // pins the element for the the scene's duration
                         .addTo(controller); // assign the scene to the controller
-
                     j = j + 1;
                 };
-
                 new ScrollMagic.Scene({
                         triggerElement: this.$$('.pin_trigger'),
                         triggerHook: 0.25,
@@ -301,36 +300,11 @@ Traveling
                     })
                     .setPin(this.$$('.pin_point'))
                     .addTo(controller); // assign the scene to the controller
-
             }
-          });
 
+          }
 
-            // text_blur: function(text_is_blur) {
-            //     if (text_is_blur) {
-            //         TweenMax.to(this.$$('.text_fadeout'),
-            //             .4, {
-            //                 opacity: .1,
-            //             });
-            //         TweenMax.to(this.$$('.filter'), .4, {
-            //             opacity: 0,
-            //         });
-            //     } else {
-            //         TweenMax.to(this.$$('.text_fadeout'),
-            //             .4, {
-            //                 opacity: 1,
-            //             });
-            //         TweenMax.to(this.$$('.filter'), .4, {
-            //             opacity: 1,
-            //         });
-            //     };
-            // }
-
-            // fuck_button: function() {
-            //     this.pressed = !this.pressed;
-            //     this.$$('paper-button').innerHTML = this.pressed ?
-            //         "asdfsaf" : "FUCK ME CUNT!!!";
-            // }
+          Polymer(scrollControl);
 
 
     </script>
