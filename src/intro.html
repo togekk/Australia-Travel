@@ -1,8 +1,6 @@
 <!-- intro.html -->
 
-<link rel="import" href="../elements.html">
-
-<dom-module id="my-app">
+<dom-module id="simon-intro">
 	<template>
 	<style>
 		@charset "utf-8";
@@ -140,9 +138,14 @@
 	</template>
 
 	<script>
+
+	window.addEventListener("WebComponentsReady", function (e) {
+			document.querySelector("simon-intro").fire('iron-signal', {name: "foo", data: "Foo!"});
+	});
+
 		class introControl extends HTMLElement {
 			beforeRegister() {
-				this.is = 'my-app';
+				this.is = 'simon-intro';
 				this.properties = {
 					disabled: {
 						type: Boolean,
@@ -186,15 +189,43 @@
 			}
 
 			leave() {
-				TweenMax.fromTo(this.$$('.pre'), .7, {opacity: 1, y: 0}, {opacity: 0, y: -10, ease: Power2.easeIn});
-				TweenMax.fromTo(this.$$('.name'), .5, {opacity: 1, y: 0}, {opacity: 0, y: -10, ease: Power2.easeIn});
-				TweenMax.fromTo(this.$$('.enter'), .3, {opacity: 1, x: 0}, {opacity: 0, x: -5, ease: Power2.easeIn, onComplete: function() {
-					this.disabled = true;
-				}, onCompleteScope: this});
+				TweenMax.fromTo(this.$$('.pre'), .7, {
+					opacity: 1,
+					y: 0
+				}, {
+					opacity: 0,
+					y: -10,
+					ease: Power2.easeIn,
+					onComplete: function() {
+						console.log('firing signal');
+
+					},
+					onCompleteScope: this
+				});
+				TweenMax.fromTo(this.$$('.name'), .5, {
+					opacity: 1,
+					y: 0
+				}, {
+					opacity: 0,
+					y: -10,
+					ease: Power2.easeIn
+				});
+				TweenMax.fromTo(this.$$('.enter'), .3, {
+					opacity: 1,
+					x: 0
+				}, {
+					opacity: 0,
+					x: -5,
+					ease: Power2.easeIn,
+					onComplete: function() {
+						this.disabled = true;
+					},
+					onCompleteScope: this
+				});
 
 			}
+
 		}
 		Polymer(introControl);
 	</script>
 </dom-module>
->

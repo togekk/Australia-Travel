@@ -1,0 +1,49 @@
+<!-- intro.html -->
+
+<link rel="import" href="../elements.html">
+<link rel="import" href="intro.html">
+<link rel="import" href="travel.html">
+
+<dom-module id="simon-app">
+	<template id="app">
+	<style>
+		@charset "utf-8";
+		/* CSS Document */
+
+
+	</style>
+
+
+	<simon-intro></simon-intro>
+	<simon-travel hidden$="{{travel_hidden}}"></simon-travel>
+
+	<iron-signals on-iron-signal-foo="{{fooSignal}}"></iron-signals>
+	<!-- <iron-signals on-iron-signal-leave="intro_leave"></iron-signals> -->
+
+	</template>
+
+	<script>
+	window.addEventListener("WebComponentsReady", function (e) {
+		console.log(document.querySelector("simon-intro"));
+			document.querySelector("simon-intro").fooSignal = function () {
+			 	console.log('OK');
+		 	};
+ 	});
+
+		class mainControl extends HTMLElement {
+			beforeRegister() {
+				this.is = 'simon-app';
+				this.properties = {
+					travel_hidden: {
+						type: Boolean,
+						value: true
+					}
+				};
+
+			};
+
+		}
+
+		Polymer(mainControl);
+	</script>
+</dom-module>
