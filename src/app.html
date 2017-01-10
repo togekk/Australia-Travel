@@ -9,11 +9,21 @@
 	<style>
 		@charset "utf-8";
 		/* CSS Document */
-
-
+		.loading {
+				width: 100%;
+				height: 100%;
+				min-height: 100%;
+				background-color: rgba(0,0,0,0.5);
+				position: fixed;
+				z-index: 100;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: #FFFFFF
+		}
 	</style>
 
-
+	<div class="loading">{{loading_percentage}} %</div>
 	<simon-intro hidden="{{intro_hidden}}"></simon-intro>
 	<simon-travel hidden="{{travel_hidden}}"></simon-travel>
 
@@ -37,14 +47,67 @@
 					travel_hidden: {
 						type: Boolean,
 						value: true
+					},
+					loading_percentage: {
+						type: Number,
+						value: 0
 					}
 				};
-				this.fooSignal = function () {
+				this.fooSignal = function() {
 				 	this.travel_hidden = false;
 					TweenMax.to(this.$$('simon-intro'), 1, {opacity: 0, onComplete: function() {this.intro_hidden = true}, onCompleteScope: this}).delay(1)
 				};
-
 			};
+
+				ready() {
+					const bg_images = [
+						'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro
+						'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
+						'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
+						'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
+						'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
+					];
+					this.load(bg_images);
+				};
+
+				load(images) {
+
+						let i = 0;
+						let completedPercentage = [];
+						let sum;
+
+							for (let image of images) {
+							(function(i) {
+								let xmlHTTP = new XMLHttpRequest();
+								xmlHTTP.open('GET', image, true);
+								xmlHTTP.responseType = 'arraybuffer';
+								xmlHTTP.onload = function(e) {
+										let blob = new Blob([this.response]);
+										let src = window.URL.createObjectURL(blob);
+								};
+								xmlHTTP.onprogress = function(e) {
+										completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
+										sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) / images.length);
+									 //  console.log(image, completedPercentage[image]);
+									 console.log(sum);
+									 document.querySelector("simon-app").loading_percentage = sum;
+
+									 console.log(document.querySelector("simon-app").loading_percentage);
+								};
+								xmlHTTP.onloadstart = function() {
+										completedPercentage[i] = 0;
+								};
+								xmlHTTP.send();
+							})(i);
+
+
+
+							 i++;
+						}
+
+
+				};
+
 
 		}
 
