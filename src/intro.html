@@ -34,7 +34,7 @@
 		}
 
 		.intro .title {
-			margin: 10% auto 0 auto;
+			margin: 15% auto 0 auto;
 		}
 
 		.pre {
@@ -133,15 +133,16 @@
 			</div>
 		</div>
 	</div>
-	<div class='route_loading' ng-hide="loading_complete"><span>Loading<i class='fa fa-cog fa-spin'></i></span></div>
+	<!-- <div class='route_loading' ng-hide="loading_complete"><span>Loading<i class='fa fa-cog fa-spin'></i></span></div> -->
 
 	</template>
 
 	<script>
 
-	window.addEventListener("WebComponentsReady", function (e) {
-			document.querySelector("simon-intro").fire('iron-signal', {name: "foo", data: "Foo!"});
-	});
+	// window.addEventListener("WebComponentsReady", function (e) {
+	// 	console.log(document.querySelector("simon-intro"));
+	// 		// document.querySelector("simon-intro").fire('iron-signal', {name: "foo", data: "Foo!"});
+	// });
 
 		class introControl extends HTMLElement {
 			beforeRegister() {
@@ -156,6 +157,7 @@
 
 
 			ready() {
+				// console.log(this);
 
 				TweenMax.fromTo(this.$$('.pre'), 1, {
 					opacity: 0,
@@ -198,9 +200,8 @@
 					ease: Power2.easeIn,
 					onComplete: function() {
 						console.log('firing signal');
-
-					},
-					onCompleteScope: this
+						document.querySelector("simon-intro").fire('iron-signal', {name: "foo", data: "Foo!"});
+					}
 				});
 				TweenMax.fromTo(this.$$('.name'), .5, {
 					opacity: 1,

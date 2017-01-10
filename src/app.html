@@ -14,21 +14,21 @@
 	</style>
 
 
-	<simon-intro></simon-intro>
-	<simon-travel hidden$="{{travel_hidden}}"></simon-travel>
+	<simon-intro hidden="{{intro_hidden}}"></simon-intro>
+	<simon-travel hidden="{{travel_hidden}}"></simon-travel>
 
-	<iron-signals on-iron-signal-foo="{{fooSignal}}"></iron-signals>
+	<iron-signals on-iron-signal-foo="fooSignal"></iron-signals>
 	<!-- <iron-signals on-iron-signal-leave="intro_leave"></iron-signals> -->
 
 	</template>
 
 	<script>
-	window.addEventListener("WebComponentsReady", function (e) {
-		console.log(document.querySelector("simon-intro"));
-			document.querySelector("simon-intro").fooSignal = function () {
-			 	console.log('OK');
-		 	};
- 	});
+	// window.addEventListener("WebComponentsReady", function (e) {
+	// 	console.log(document.querySelector("simon-intro"));
+	// 		// document.querySelector("simon-intro").fooSignal = function () {
+	// 		//  	console.log('OK');
+	// 		// 	};
+ // 	});
 
 		class mainControl extends HTMLElement {
 			beforeRegister() {
@@ -38,6 +38,10 @@
 						type: Boolean,
 						value: true
 					}
+				};
+				this.fooSignal = function () {
+				 	this.travel_hidden = false;
+					TweenMax.to(this.$$('simon-intro'), 1, {opacity: 0, onComplete: function() {this.intro_hidden = true}, onCompleteScope: this}).delay(1)
 				};
 
 			};
