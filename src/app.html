@@ -13,37 +13,60 @@
 				width: 100%;
 				height: 100%;
 				min-height: 100%;
-				background-color: rgba(0,0,0,0.5);
+				background-color: #000;
 				position: fixed;
 				z-index: 100;
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
-				color: #FFFFFF
+				color: #FFFFFF;
+		}
+
+		.fade {
+			opacity: .5
+		}
+
+		paper-progress {
+			margin-top: 2%
+			--paper-progress-active-color: #BABABA;
+			--paper-progress-container-color: #000;
 		}
 	</style>
 
-	<div class="loading">{{loading_percentage}} %</div>
+	<div class="loading" hidden="{{loading_hidden}}">
+		<div class="fade">{{loading_percentage}} %</div>
+		<paper-progress class="fade" value="{{loading_percentage}}"></paper-progress>
+	</div>
 	<simon-intro hidden="{{intro_hidden}}"></simon-intro>
 	<simon-travel hidden="{{travel_hidden}}"></simon-travel>
 
 	<iron-signals on-iron-signal-foo="fooSignal"></iron-signals>
+	<iron-signals on-iron-signal-travel-ready="travel_ready"></iron-signals>
 	<!-- <iron-signals on-iron-signal-leave="intro_leave"></iron-signals> -->
 
 	</template>
 
 	<script>
-	// window.addEventListener("WebComponentsReady", function (e) {
-	// 	console.log(document.querySelector("simon-intro"));
-	// 		// document.querySelector("simon-intro").fooSignal = function () {
-	// 		//  	console.log('OK');
-	// 		// 	};
- // 	});
+		// window.addEventListener("WebComponentsReady", function (e) {
+		// 	console.log(document.querySelector("simon-intro"));
+		// 		// document.querySelector("simon-intro").fooSignal = function () {
+		// 		//  	console.log('OK');
+		// 		// 	};
+		// 	});
 
 		class mainControl extends HTMLElement {
 			beforeRegister() {
 				this.is = 'simon-app';
 				this.properties = {
+					loading_hidden: {
+						type: Boolean,
+						value: false
+					},
+					intro_hidden: {
+						type: Boolean,
+						value: true
+					},
 					travel_hidden: {
 						type: Boolean,
 						value: true
@@ -54,60 +77,75 @@
 					}
 				};
 				this.fooSignal = function() {
-				 	this.travel_hidden = false;
-					TweenMax.to(this.$$('simon-intro'), 1, {opacity: 0, onComplete: function() {this.intro_hidden = true}, onCompleteScope: this}).delay(1)
+					this.travel_hidden = false;
+					TweenMax.to(this.$$('simon-intro'), 1, {
+						opacity: 0,
+						onComplete: function() {
+							this.intro_hidden = true
+						},
+						onCompleteScope: this
+					}).delay(.5)
 				};
 			};
 
-				ready() {
-					const bg_images = [
-						'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro
-						'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
-						'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
-						'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
-						'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
-					];
-					this.load(bg_images);
-				};
+			ready() {
+				const bg_images = [
+					'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro
+					'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
+					'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
+					'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
+					'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
+				];
+				this.load(bg_images);
+			};
 
-				load(images) {
+			load(images) {
 
-						let i = 0;
-						let completedPercentage = [];
-						let sum;
+				let i = 0;
+				let completedPercentage = [];
+				let sum;
 
-							for (let image of images) {
-							(function(i) {
-								let xmlHTTP = new XMLHttpRequest();
-								xmlHTTP.open('GET', image, true);
-								xmlHTTP.responseType = 'arraybuffer';
-								xmlHTTP.onload = function(e) {
-										let blob = new Blob([this.response]);
-										let src = window.URL.createObjectURL(blob);
-								};
-								xmlHTTP.onprogress = function(e) {
-										completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
-										sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) / images.length);
-									 //  console.log(image, completedPercentage[image]);
-									 console.log(sum);
-									 document.querySelector("simon-app").loading_percentage = sum;
+				for (let image of images) {
+					(function(i) {
+						let xmlHTTP = new XMLHttpRequest();
+						xmlHTTP.open('GET', image, true);
+						xmlHTTP.responseType = 'arraybuffer';
+						xmlHTTP.onload = function(e) {
+							let blob = new Blob([this.response]);
+							let src = window.URL.createObjectURL(blob);
+						};
+						xmlHTTP.onprogress = function(e) {
+							completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
+							sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
+								images.length);
+							//  console.log(image, completedPercentage[image]);
+							//  console.log(sum);
+							document.querySelector("simon-app").loading_percentage = sum;
+							//  console.log(document.querySelector("simon-app").loading_percentage);
 
-									 console.log(document.querySelector("simon-app").loading_percentage);
-								};
-								xmlHTTP.onloadstart = function() {
-										completedPercentage[i] = 0;
-								};
-								xmlHTTP.send();
-							})(i);
+							if (sum === 100) {
+								document.querySelector("simon-app").intro_hidden = false;
+								TweenMax.to(document.querySelector('.loading'), 1, {
+									opacity: 0,
+									onComplete: function() {
+										document.querySelector("simon-app").loading_hidden = true;
+									}
+								}).delay(1)
+
+							}
 
 
+						};
+						xmlHTTP.onloadstart = function() {
+							completedPercentage[i] = 0;
+						};
+						xmlHTTP.send();
+					})(i);
 
-							 i++;
-						}
+					i++;
+				}
 
-
-				};
-
+			};
 
 		}
 
