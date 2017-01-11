@@ -109,7 +109,7 @@
 					let xmlHTTP = new XMLHttpRequest();
 					xmlHTTP.open('GET', images[i], true);
 					xmlHTTP.responseType = 'arraybuffer';
-					xmlHTTP.onload = function(e) {
+					xmlHTTP.onload = e => {
 						let blob = new Blob([this.response]);
 						let src = window.URL.createObjectURL(blob);
 					};
@@ -126,7 +126,7 @@
 								onComplete() {
 									document.querySelector("simon-app").loading_hidden = true;
 								}
-							}).delay(1)
+							}).delay(.5)
 						}
 
 					};
