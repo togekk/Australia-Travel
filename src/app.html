@@ -80,7 +80,7 @@
 					this.travel_hidden = false;
 					TweenMax.to(this.$$('simon-intro'), 1, {
 						opacity: 0,
-						onComplete: function() {
+						onComplete() {
 							this.intro_hidden = true
 						},
 						onCompleteScope: this
@@ -113,7 +113,7 @@
 						let blob = new Blob([this.response]);
 						let src = window.URL.createObjectURL(blob);
 					};
-					xmlHTTP.onprogress = function(e) {
+					xmlHTTP.onprogress = e => {
 						completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
 						sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
 							images.length);
@@ -123,14 +123,14 @@
 							document.querySelector("simon-app").intro_hidden = false;
 							TweenMax.to(document.querySelector('.loading'), 1, {
 								opacity: 0,
-								onComplete: function() {
+								onComplete() {
 									document.querySelector("simon-app").loading_hidden = true;
 								}
 							}).delay(1)
 						}
 
 					};
-					xmlHTTP.onloadstart = function() {
+					xmlHTTP.onloadstart = () => {
 						completedPercentage[i] = 0;
 					};
 					xmlHTTP.send();

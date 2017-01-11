@@ -229,8 +229,6 @@ Traveling
   </template>
 
     <script>
-        'use strict';
-
         class scrollControl extends HTMLElement {
 
             beforeRegister() {
@@ -263,7 +261,7 @@ Traveling
                             duration: 1000,
                             offset: 500 * i
                         })
-                        .setTween(this.$$('#fadein' + i), {
+                        .setTween(this.$$(`#fadein${i}`), {
                             opacity: 1
                         })
                         .addTo(controller); // assign the scene to the controller
@@ -284,7 +282,7 @@ Traveling
                             duration: 300,
                             // offset: 50
                         })
-                        .setTween(this.$$('.img' + j), {
+                        .setTween(this.$$(`.img${j}`), {
                             opacity: 0
                         }) // pins the element for the the scene's duration
                         .addTo(controller); // assign the scene to the controller
@@ -334,4 +332,8 @@ Traveling
 
         Polymer(scrollControl);
     </script>
+</dom-module>
+fadeout_all) { TweenMax.to(text_fadeout, .4, { opacity: 1, }) } TweenMax.to(this.$$('.filter'),
+.4, { opacity: 1, }) } } Polymer(scrollControl);
+</script>
 </dom-module>

@@ -138,11 +138,6 @@
 	</template>
 
 	<script>
-		// window.addEventListener("WebComponentsReady", function (e) {
-		// 	console.log(document.querySelector("simon-intro"));
-		// 		// document.querySelector("simon-intro").fire('iron-signal', {name: "foo", data: "Foo!"});
-		// });
-
 		class introControl extends HTMLElement {
 			beforeRegister() {
 				this.is = 'simon-intro';
@@ -154,30 +149,7 @@
 				};
 			}
 
-			// load(url) {
-			// 			let completedPercentage;
-			//        let xmlHTTP = new XMLHttpRequest();
-			//        xmlHTTP.open('GET', url,true);
-			//        xmlHTTP.responseType = 'arraybuffer';
-			//        xmlHTTP.onload = function(e) {
-			//            let blob = new Blob([this.response]);
-			//            let src = window.URL.createObjectURL(blob);
-			//        };
-			//        xmlHTTP.onprogress = function(e) {
-			//            completedPercentage = parseInt((e.loaded / e.total) * 100);
-			// 					//  console.log(completedPercentage);
-			// 					 document.querySelector("simon-intro").fire('iron-signal', {name: "intro-completed-percentage", data: completedPercentage});
-			//
-			//        };
-			//        xmlHTTP.onloadstart = function() {
-			//            completedPercentage = 0;
-			//        };
-			//        xmlHTTP.send();
-			//    };
-
 			ready() {
-				// console.log(this);
-				// this.load('https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg');
 
 				TweenMax.fromTo(this.$$('.pre'), 1, {
 					opacity: 0,
@@ -202,7 +174,7 @@
 					opacity: 1,
 					x: 0,
 					ease: Power2.easeOut,
-					onComplete: function() {
+					onComplete() {
 						this.disabled = false;
 					},
 					onCompleteScope: this
@@ -218,7 +190,7 @@
 					opacity: 0,
 					y: -10,
 					ease: Power2.easeIn,
-					onComplete: function() {
+					onComplete() {
 						// console.log('firing signal');
 						document.querySelector("simon-intro").fire('iron-signal', {
 							name: "foo",
@@ -241,7 +213,7 @@
 					opacity: 0,
 					x: -5,
 					ease: Power2.easeIn,
-					onComplete: function() {
+					onComplete() {
 						this.disabled = true;
 					},
 					onCompleteScope: this
