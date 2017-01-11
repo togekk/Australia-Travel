@@ -84,7 +84,7 @@
 							this.intro_hidden = true
 						},
 						onCompleteScope: this
-					}).delay(.5)
+					}).delay(1)
 				};
 			};
 
@@ -101,48 +101,40 @@
 
 			load(images) {
 
-				let i = 0;
 				let completedPercentage = [];
 				let sum;
 
-				for (let image of images) {
-					(function(i) {
-						let xmlHTTP = new XMLHttpRequest();
-						xmlHTTP.open('GET', image, true);
-						xmlHTTP.responseType = 'arraybuffer';
-						xmlHTTP.onload = function(e) {
-							let blob = new Blob([this.response]);
-							let src = window.URL.createObjectURL(blob);
-						};
-						xmlHTTP.onprogress = function(e) {
-							completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
-							sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
-								images.length);
-							//  console.log(image, completedPercentage[image]);
-							//  console.log(sum);
-							document.querySelector("simon-app").loading_percentage = sum;
-							//  console.log(document.querySelector("simon-app").loading_percentage);
+				for (let i = 0; i < images.length; i++) {
 
-							if (sum === 100) {
-								document.querySelector("simon-app").intro_hidden = false;
-								TweenMax.to(document.querySelector('.loading'), 1, {
-									opacity: 0,
-									onComplete: function() {
-										document.querySelector("simon-app").loading_hidden = true;
-									}
-								}).delay(1)
+					let xmlHTTP = new XMLHttpRequest();
+					xmlHTTP.open('GET', images[i], true);
+					xmlHTTP.responseType = 'arraybuffer';
+					xmlHTTP.onload = function(e) {
+						let blob = new Blob([this.response]);
+						let src = window.URL.createObjectURL(blob);
+					};
+					xmlHTTP.onprogress = function(e) {
+						completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
+						sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
+							images.length);
+						document.querySelector("simon-app").loading_percentage = sum;
 
-							}
+						if (sum === 100) {
+							document.querySelector("simon-app").intro_hidden = false;
+							TweenMax.to(document.querySelector('.loading'), 1, {
+								opacity: 0,
+								onComplete: function() {
+									document.querySelector("simon-app").loading_hidden = true;
+								}
+							}).delay(1)
+						}
 
+					};
+					xmlHTTP.onloadstart = function() {
+						completedPercentage[i] = 0;
+					};
+					xmlHTTP.send();
 
-						};
-						xmlHTTP.onloadstart = function() {
-							completedPercentage[i] = 0;
-						};
-						xmlHTTP.send();
-					})(i);
-
-					i++;
 				}
 
 			};
@@ -152,3 +144,6 @@
 		Polymer(mainControl);
 	</script>
 </dom-module>
+> > ript>
+</dom-module>
+> >
