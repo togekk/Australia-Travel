@@ -16,4 +16,4 @@
 
 ### Hosting
 
-* **Firebase** for website hosting
+* **Firebase** for website and database hosting
