@@ -5,7 +5,9 @@
 <link rel="import" href="travel.html">
 
 <dom-module id="simon-app">
+
 	<template id="app">
+
 	<style>
 		@charset "utf-8";
 		/* CSS Document */
@@ -47,103 +49,100 @@
 
 	</template>
 
-	<script>
-		// window.addEventListener("WebComponentsReady", function (e) {
-		// 	console.log(document.querySelector("simon-intro"));
-		// 		// document.querySelector("simon-intro").fooSignal = function () {
-		// 		//  	console.log('OK');
-		// 		// 	};
-		// 	});
+		<script>
+			// window.addEventListener("WebComponentsReady", function (e) {
+			// 	console.log(document.querySelector("simon-intro"));
+			// 		// document.querySelector("simon-intro").fooSignal = function () {
+			// 		//  	console.log('OK');
+			// 		// 	};
+			// 	});
 
-		class mainControl extends HTMLElement {
-			beforeRegister() {
-				this.is = 'simon-app';
-				this.properties = {
-					loading_hidden: {
-						type: Boolean,
-						value: false
-					},
-					intro_hidden: {
-						type: Boolean,
-						value: true
-					},
-					travel_hidden: {
-						type: Boolean,
-						value: true
-					},
-					loading_percentage: {
-						type: Number,
-						value: 0
-					}
-				};
-				this.fooSignal = function() {
-					this.travel_hidden = false;
-					TweenMax.to(this.$$('simon-intro'), 1, {
-						opacity: 0,
-						onComplete() {
-							this.intro_hidden = true
+			class mainControl extends HTMLElement {
+				beforeRegister() {
+					this.is = 'simon-app';
+					this.properties = {
+						loading_hidden: {
+							type: Boolean,
+							value: false
 						},
-						onCompleteScope: this
-					}).delay(1)
-				};
-			};
-
-			ready() {
-				const bg_images = [
-					'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro
-					'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
-					'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
-					'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
-					'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
-				];
-				this.load(bg_images);
-			};
-
-			load(images) {
-
-				let completedPercentage = [];
-				let sum;
-
-				for (let i = 0; i < images.length; i++) {
-
-					let xmlHTTP = new XMLHttpRequest();
-					xmlHTTP.open('GET', images[i], true);
-					xmlHTTP.responseType = 'arraybuffer';
-					xmlHTTP.onload = e => {
-						let blob = new Blob([this.response]);
-						let src = window.URL.createObjectURL(blob);
-					};
-					xmlHTTP.onprogress = e => {
-						completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
-						sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
-							images.length);
-						document.querySelector("simon-app").loading_percentage = sum;
-
-						if (sum === 100) {
-							document.querySelector("simon-app").intro_hidden = false;
-							TweenMax.to(document.querySelector('.loading'), 1, {
-								opacity: 0,
-								onComplete() {
-									document.querySelector("simon-app").loading_hidden = true;
-								}
-							}).delay(.5)
+						intro_hidden: {
+							type: Boolean,
+							value: true
+						},
+						travel_hidden: {
+							type: Boolean,
+							value: true
+						},
+						loading_percentage: {
+							type: Number,
+							value: 0
 						}
-
 					};
-					xmlHTTP.onloadstart = () => {
-						completedPercentage[i] = 0;
+					this.fooSignal = function() {
+						this.travel_hidden = false;
+						TweenMax.to(this.$$('simon-intro'), 1, {
+							opacity: 0,
+							onComplete() {
+								this.intro_hidden = true
+							},
+							onCompleteScope: this
+						}).delay(1)
 					};
-					xmlHTTP.send();
+				};
 
-				}
+				ready() {
+					const bg_images = [
+						'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro
+						'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
+						'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
+						'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
+						'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
+					];
+					this.load(bg_images);
+				};
 
-			};
+				load(images) {
 
-		}
+					let completedPercentage = [];
+					let sum;
 
-		Polymer(mainControl);
-	</script>
+					for (let i = 0; i < images.length; i++) {
+
+						let xmlHTTP = new XMLHttpRequest();
+						xmlHTTP.open('GET', images[i], true);
+						xmlHTTP.responseType = 'arraybuffer';
+						xmlHTTP.onload = e => {
+							let blob = new Blob([this.response]);
+							let src = window.URL.createObjectURL(blob);
+						};
+						xmlHTTP.onprogress = e => {
+							completedPercentage[i] = parseInt((e.loaded / e.total) * 100);
+							sum = parseInt(completedPercentage.reduce((a, b) => a + b, 0) /
+								images.length);
+							document.querySelector("simon-app").loading_percentage = sum;
+
+							if (sum === 100) {
+								document.querySelector("simon-app").intro_hidden = false;
+								TweenMax.to(document.querySelector('.loading'), 1, {
+									opacity: 0,
+									onComplete() {
+										document.querySelector("simon-app").loading_hidden = true;
+									}
+								}).delay(.5)
+							}
+
+						};
+						xmlHTTP.onloadstart = () => {
+							completedPercentage[i] = 0;
+						};
+						xmlHTTP.send();
+
+					}
+
+				};
+
+			}
+
+			Polymer(mainControl);
+		</script>
 </dom-module>
-> > ript>
-</dom-module>
-> >

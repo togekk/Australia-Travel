@@ -4,7 +4,9 @@ Traveling
 
 @demo demo/index.html
 -->
+
 <dom-module id="simon-travel">
+
     <template>
 
     <style>
@@ -105,6 +107,8 @@ Traveling
       }
     </style>
 
+
+
     <div class="bg_container fill">
   		<div class="bg img4 fill"></div>
   		<div class="bg img3 fill"></div>
@@ -151,12 +155,33 @@ Traveling
   	</div>
 
 
+    <firebase-app
+    name="data"
+    auth-domain="simon-cheng-1f786.firebaseapp.com"
+    database-url="https://simon-cheng-1f786.firebaseio.com/"
+    api-key="AIzaSyDLC2pZ8gUAxVBJInHk0MFVjQzUsuzTI-g">
+    </firebase-app>
+
+
+
   	<div class="text text_fadeout">
 
       <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
 
   		<div class="content">
-  			<h2 class="switch">22.03.2013
+
+
+        <firebase-query id="query" app-name="data" path="/data/en/data" data="{{data}}" transactions-complete="transactionCompleted"></firebase-query>
+        <template is="dom-repeat" items="{{data}}" as="text">
+          {{jsonStringify(text)}}
+        </template>
+        <div class="data_content"></div>
+
+        <!-- <firebase-document id="query" app-name="data" path="/data/en/data/post0001/text" data="{{data}}"></firebase-document>
+        <span class="data_content">{{jsonStringify(data)}}</span> -->
+
+
+    <!-- <h2 class="switch">22.03.2013
   			</h2>
   			<p>&nbsp;
   			</p>
@@ -218,15 +243,14 @@ Traveling
   				until I understand what he was talking about. So he went crazy, and I went crazy, too.
   			</p>
   			<p>Finally got it done. So I hopped on the bus and went straight to the city centre.
-  			</p>
-  		</div>
+  			</p> -->
+    </div>
 
-      <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
+    <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
 
-  	</div>
+    </div>
 
-
-  </template>
+    </template>
 
     <script>
         class scrollControl extends HTMLElement {
@@ -234,11 +258,32 @@ Traveling
             beforeRegister() {
                 this.is = 'simon-travel';
                 this.properties = {
-
+                    data: Object,
+                    data2: Object,
+                    a: {
+                      type: Array,
+                      value: []
+                    },
+                    count: {
+                      type: Number,
+                      value: 1
+                    }
                 }
             }
 
-            ready() {
+            jsonStringify(text) {
+              this.a.push(text.$val);
+              if (this.count >= this.data.length) {
+                var el = document.createElement('div');
+                let b = this.a.reverse();
+                el.innerHTML = b.join("");
+                this.$$('.data_content').appendChild(el);
+                this.render_page();
+              };
+              this.count = this.count + 1;
+            }
+
+            render_page() {
 
                 // init controller
                 const controller = new ScrollMagic.Controller();
@@ -332,8 +377,4 @@ Traveling
 
         Polymer(scrollControl);
     </script>
-</dom-module>
-fadeout_all) { TweenMax.to(text_fadeout, .4, { opacity: 1, }) } TweenMax.to(this.$$('.filter'),
-.4, { opacity: 1, }) } } Polymer(scrollControl);
-</script>
 </dom-module>
