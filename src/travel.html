@@ -172,12 +172,11 @@ Traveling
 
 
 
-  	<div class="text text_fadeout">
+  	<div class="text text_fadeout" on-tap="tap_content">
 
-      <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
+      <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
 
   		<div class="content">
-
 
         <firebase-query id="query" app-name="data" path="/data/en/data" data="{{data}}" transactions-complete="transactionCompleted"></firebase-query>
         <template is="dom-repeat" items="{{data}}" as="text">
@@ -185,76 +184,9 @@ Traveling
         </template>
         <div class="data_content"></div>
 
-        <!-- <firebase-document id="query" app-name="data" path="/data/en/data/post0001/text" data="{{data}}"></firebase-document>
-        <span class="data_content">{{jsonStringify(data)}}</span> -->
-
-
-    <!-- <h2 class="switch">22.03.2013
-  			</h2>
-  			<p>&nbsp;
-  			</p>
-  			<p>
-  				Sydney, the biggest city in Australia. Everything&#39;s so big and so complex. Especially the Central Station. When I arrived in there I was totally shocked. 21 platforms! Never seen so many in my life. And every street is extremely busy. Alright, I have
-  				to head for the hostel to put my luggage so that everything will be easier.
-  			</p>
-  			<p>
-  				The hostel located near the small beach which probably few backpackers knows about it -- Coogee Beach. I only checked one bus called &quot;M50&quot; and saved a screenshot in my phone, so I had to find the bus since I had no Internet. Well, or since I
-  				was too self-confident. So I spent 2 hours, dragging my 36kg luggage, running in circle and asking around Central station, but just couldn&#39;t find any signs showing M50. I did find one, but it was in the wrong direction. That luggage nearly killed
-  				me, and I&#39;ll swear I&#39;ll never do that again.
-  			</p>
-  			<p>
-  				When I finally arrived at Coogee Beach, it was already 2pm. I rang the hostel&#39;s doorbell, no one answered. I looked up to the sign near the door. &quot;Office Hour: 9am-1pm, 5pm-10pm&quot; Wait, what? They have lunch break? So I just dragged my luggage
-  				again back to the beach. I was so tired but I couldn&#39;t sleep. I felt so insecure about my stuff will get stolen anytime.
-  			</p>
-  			<p class="switch">
-  				&nbsp;
-  			</p>
-  			<p class="pin_trigger"></p>
-  			<div class="pin_point">
-  				<p>
-  					I walked down to the beach. Sat down on the bench. Staring at the crowd playing beach ball, lying in the sand, enjoying every piece of sunshine.
-  				</p>
-  				<p>&nbsp;
-  				</p>
-  				<p>I&rsquo;ve never felt so confused about my life. Few days ago I was still struggling in the last lines of my coding, arguing with my supervisor. And now I&rsquo;m suddenly here, enjoying the freedom at last. Or is this all real?
-  				</p>
-  			</div>
-  			<p>&nbsp;
-  			</p>
-
-  			<p>Finally they let me in. The hostel wasn&rsquo;t quite big. I thought there should be an elevator or something, but again, I had to walk up the stairs wth my 36kg luggage. That was the longest day of my life, fortunately a guy gave me a hand and guided
-  				me to the reception, which was on the top floor. Finally! But the guy at the reception told me I have to pay like 40 AUD more beside the deposit. What? I thought I pay all of it online already! The traveler cheques are the only thing I had with me.
-  			</p>
-  			<p>&ldquo;Do you accept credit cards? Or traveler&rsquo;s cheques&hellip;&hellip;?&rdquo;
-  			</p>
-  			<p>&ldquo;No. Sorry we only accept cash.&rdquo;
-  			</p>
-  			<p>It was nearly 6pm, so I rushed downstairs and finally found a bank on the street, which was so nice to open the door for me before it closed. Otherwise I&rsquo;ll be homeless.
-  			</p>
-  			<p>&ldquo;We&rsquo;re closing now, but you&rsquo;re a backpacker, I will open the door for you. I know backpackers need money.&rdquo;
-  			</p>
-  			<p>That was the warmest words for my life!
-  			</p>
-
-
-  			<p class="switch">
-  				&nbsp;
-  			</p>
-  			<h2>23.03.2013
-  			</h2>
-  			<p>&nbsp;
-  			</p>
-  			<p>That was a very nice beach town. I watched the sunrise from the window. Everything was so peaceful like a picture.
-  			</p>
-  			<p>So after arriving in Australia, the first thing to do is get three numbers: Phone Number, Tax File Number and Bank Account Number. I had to get phone number first, plus I didn&rsquo;t want to keep my family worried. So I bought a SIM card in the store
-  				and tried to activate it. That was my first time having a conversation in English, and guess what? The costumer service had a very strong accent, so I totally couldn&rsquo;t understand what he was talking about. He had to repeat every question 3 times
-  				until I understand what he was talking about. So he went crazy, and I went crazy, too.
-  			</p>
-  			<p>Finally got it done. So I hopped on the bus and went straight to the city centre.
-  			</p> -->
     </div>
 
-    <div class="bleed" on-mouseover="onHovered" on-mouseout="onUnhovered"></div>
+    <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
 
     </div>
 
@@ -264,7 +196,9 @@ Traveling
         class scrollControl extends HTMLElement {
 
             beforeRegister() {
+
                 this.is = 'simon-travel';
+
                 this.properties = {
                     data: Object,
                     data2: Object,
@@ -275,8 +209,23 @@ Traveling
                     count: {
                       type: Number,
                       value: 1
+                    },
+                    content_show: {
+                      type: Boolean,
+                      value: false
                     }
-                }
+                };
+
+                // this.behaviors = [Polymer.IronResizableBehavior];
+                //
+                // this.listeners = {
+                //   'iron-resize': 'window_resize'
+                // }
+
+                // this.attached = function() {
+                //   this.async(this.notifyResize, 1);
+                // };
+
             }
 
             jsonStringify(text) {
@@ -309,6 +258,7 @@ Traveling
                             opacity: 0
                         })
                     .addTo(controller); // assign the scene to the controller
+
                 for (let i = 0; i < text_fadein.length; i++) {
                     new ScrollMagic.Scene({
                             duration: 1000,
@@ -319,6 +269,7 @@ Traveling
                         })
                         .addTo(controller); // assign the scene to the controller
                 };
+
                 new ScrollMagic.Scene({
                         triggerElement: this.$$('.content'),
                     })
@@ -327,7 +278,9 @@ Traveling
                             opacity: 0
                         })
                     .addTo(controller); // assign the scene to the controller
+
                 let j = 1;
+
                 for (let slide of slides) {
                     // create a scene
                     new ScrollMagic.Scene({
@@ -341,45 +294,82 @@ Traveling
                         .addTo(controller); // assign the scene to the controller
                     j = j + 1;
                 };
-                new ScrollMagic.Scene({
+
+                let pin_trigger = new ScrollMagic.Scene({
                         triggerElement: this.$$('.pin_trigger'),
-                        triggerHook: 0.25,
+                        // triggerHook: 0.25,
                         duration: 500
                     })
                     .setPin(this.$$('.pin_point'))
                     .addTo(controller); // assign the scene to the controller
 
-            }
-
-            onHovered() {
-
-                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
-                    '.text_fadeout');
-                for (let text_fadeout of text_fadeout_all) {
-                    TweenMax.to(text_fadeout, .4, {
-                        opacity: 0.1,
-                    })
+                let trigger_hook_switch = () => {
+                  switch (true) {
+                    case window.innerWidth >= 673:
+                      pin_trigger.triggerHook(0.25);
+                      break;
+                    case window.innerWidth < 673 && window.innerWidth >= 353:
+                      pin_trigger.triggerHook(0.1);
+                      break;
+                    case window.innerWidth < 353:
+                      pin_trigger.triggerHook(0.05);
+                      break;
+                  }
                 }
-                TweenMax.to(this.$$('.filter'), .4, {
-                    opacity: 0,
-                });
+
+                trigger_hook_switch();
+                window.onresize = () => {trigger_hook_switch()};
 
             }
 
-            onUnhovered() {
 
-                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
-                    '.text_fadeout')
-                for (let text_fadeout of text_fadeout_all) {
-                    TweenMax.to(text_fadeout, .4, {
+
+            tap_content() {
+              this.content_show = !this.content_show;
+              this.show_content(this.content_show);
+            }
+
+            bleed_hover() {
+              this.content_show = true;
+              this.show_content(this.content_show);
+            }
+
+            bleed_unhover() {
+              this.content_show = false;
+              this.show_content(this.content_show);
+            }
+
+            show_content(content_show) {
+
+              const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
+                  '.text_fadeout')
+
+                  if (content_show) {
+
+                    for (let text_fadeout of text_fadeout_all) {
+                        TweenMax.to(text_fadeout, .4, {
+                            opacity: 0.1,
+                        })
+                    }
+
+                    TweenMax.to(this.$$('.filter'), .4, {
+                        opacity: 0,
+                    })
+                  } else {
+
+
+                    for (let text_fadeout of text_fadeout_all) {
+                        TweenMax.to(text_fadeout, .4, {
+                            opacity: 1,
+                        })
+                    }
+
+                    TweenMax.to(this.$$('.filter'), .4, {
                         opacity: 1,
                     })
-                }
-                TweenMax.to(this.$$('.filter'), .4, {
-                    opacity: 1,
-                })
+                  }
 
-            }
+              }
 
         }
 
