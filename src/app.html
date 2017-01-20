@@ -47,7 +47,7 @@
 	<simon-intro hidden="{{intro_hidden}}"></simon-intro>
 	<simon-travel hidden="{{travel_hidden}}"></simon-travel>
 
-	<iron-signals on-iron-signal-foo="fooSignal"></iron-signals>
+	<iron-signals on-iron-signal-intro-ready="intro_ready"></iron-signals>
 	<iron-signals on-iron-signal-travel-ready="travel_ready"></iron-signals>
 	<!-- <iron-signals on-iron-signal-leave="intro_leave"></iron-signals> -->
 
@@ -82,7 +82,7 @@
 							value: 0
 						}
 					};
-					this.fooSignal = function() {
+					this.intro_ready = function() {
 						this.travel_hidden = false;
 						TweenMax.to(this.$$('simon-intro'), 1, {
 							opacity: 0,
@@ -126,13 +126,15 @@
 							this.loading_percentage = sum;
 
 							if (sum === 100) {
-								console.log(this.loading_hidden);
 								this.intro_hidden = false;
-								TweenMax.to(this.root.querySelector('.loading'), 1, {
+								TweenMax.to(this.$$('.loading'), 1, {
 									opacity: 0,
 									onComplete() {
-										// document.querySelector('simon-app').loading_hidden = true;
 										this.loading_hidden = true;
+										this.fire('iron-signal', {
+											name: "loading-complete",
+											data: null
+										});
 									},
 									onCompleteScope: this
 								}).delay(.5)

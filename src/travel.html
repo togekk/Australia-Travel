@@ -75,10 +75,6 @@ Traveling
         flex: 6;
       }
 
-      .bleed {
-        flex: 3;
-      }
-
       .prologue p {
         margin-bottom: 3vh;
       }
@@ -104,6 +100,18 @@ Traveling
         margin-top: 7500px;
         padding-top: 500px;
         flex: 20
+      }
+
+      @media (min-width:437px) {
+        .bleed {
+          flex: 3;
+        }
+      }
+
+      @media (max-width: 436px) and (min-width:292px) {
+        .bleed {
+          flex: 1;
+        }
       }
     </style>
 
