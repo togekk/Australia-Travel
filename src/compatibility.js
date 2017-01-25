@@ -9,5 +9,5 @@ function check() {
 }
 
 if (!check()) {
-    window.location.href = "redirect.html";
+    window.location.href = "src/redirect.html";
 }

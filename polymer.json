@@ -4,7 +4,8 @@
   "fragments": [
     "src/intro.html",
     "src/travel.html",
-    "src/my-view404.html"
+    "src/my-view404.html",
+    "src/redirect.html"
   ],
   "sourceGlobs": [
     "src/**/*",
