@@ -1,7 +1,7 @@
 <!-- intro.html -->
 
 <dom-module id="simon-intro">
-	<template>
+    <template>
 	<style>
 		@charset "utf-8";
 		/* CSS Document */
@@ -164,92 +164,92 @@
 
 	</template>
 
-	<script>
-		class introControl extends HTMLElement {
-			beforeRegister() {
-				this.is = 'simon-intro';
-				this.properties = {
-					disabled: {
-						type: Boolean,
-						value: true
-					}
-				};
-			}
+    <script>
+        class introControl extends HTMLElement {
+            beforeRegister() {
+                this.is = 'simon-intro';
+                this.properties = {
+                    disabled: {
+                        type: Boolean,
+                        value: true
+                    }
+                };
+            }
 
-			loading_complete() {
+            loading_complete() {
 
-				TweenMax.fromTo(this.$$('.pre'), 1, {
-					opacity: 0,
-					y: 20
-				}, {
-					opacity: 1,
-					y: 0,
-					ease: Power2.easeOut
-				}).delay(1);
-				TweenMax.fromTo(this.$$('.name'), 1, {
-					opacity: 0,
-					y: 20
-				}, {
-					opacity: 1,
-					y: 0,
-					ease: Power2.easeOut
-				}).delay(2);
-				TweenMax.fromTo(this.$$('.enter'), .3, {
-					opacity: 0,
-					x: 5
-				}, {
-					opacity: 1,
-					x: 0,
-					ease: Power2.easeOut,
-					onComplete() {
-						this.disabled = false;
-					},
-					onCompleteScope: this
-				}).delay(4);
+                TweenMax.fromTo(this.$$('.pre'), 1, {
+                    opacity: 0,
+                    y: 20
+                }, {
+                    opacity: 1,
+                    y: 0,
+                    ease: Power2.easeOut
+                }).delay(1);
+                TweenMax.fromTo(this.$$('.name'), 1, {
+                    opacity: 0,
+                    y: 20
+                }, {
+                    opacity: 1,
+                    y: 0,
+                    ease: Power2.easeOut
+                }).delay(2);
+                TweenMax.fromTo(this.$$('.enter'), .3, {
+                    opacity: 0,
+                    x: 5
+                }, {
+                    opacity: 1,
+                    x: 0,
+                    ease: Power2.easeOut,
+                    onComplete() {
+                        this.disabled = false;
+                    },
+                    onCompleteScope: this
+                }).delay(4);
 
-			}
+            }
 
-			leave() {
-				TweenMax.fromTo(this.$$('.pre'), .7, {
-					opacity: 1,
-					y: 0
-				}, {
-					opacity: 0,
-					y: -10,
-					ease: Power2.easeIn,
-					onComplete() {
-						// console.log('firing signal');
-						this.fire('iron-signal', {
-							name: "intro-ready",
-							data: null
-						});
-					},
-					onCompleteScope: this
-				});
-				TweenMax.fromTo(this.$$('.name'), .5, {
-					opacity: 1,
-					y: 0
-				}, {
-					opacity: 0,
-					y: -10,
-					ease: Power2.easeIn
-				});
-				TweenMax.fromTo(this.$$('.enter'), .3, {
-					opacity: 1,
-					x: 0
-				}, {
-					opacity: 0,
-					x: -5,
-					ease: Power2.easeIn,
-					onComplete() {
-						this.disabled = true;
-					},
-					onCompleteScope: this
-				});
+            leave() {
+                TweenMax.fromTo(this.$$('.pre'), .7, {
+                    opacity: 1,
+                    y: 0
+                }, {
+                    opacity: 0,
+                    y: -10,
+                    ease: Power2.easeIn,
+                    onComplete() {
+                        // console.log('firing signal');
+                        this.fire('iron-signal', {
+                            name: "intro-ready",
+                            data: null
+                        });
+                    },
+                    onCompleteScope: this
+                });
+                TweenMax.fromTo(this.$$('.name'), .5, {
+                    opacity: 1,
+                    y: 0
+                }, {
+                    opacity: 0,
+                    y: -10,
+                    ease: Power2.easeIn
+                });
+                TweenMax.fromTo(this.$$('.enter'), .3, {
+                    opacity: 1,
+                    x: 0
+                }, {
+                    opacity: 0,
+                    x: -5,
+                    ease: Power2.easeIn,
+                    onComplete() {
+                        this.disabled = true;
+                    },
+                    onCompleteScope: this
+                });
 
-			}
+            }
 
-		}
-		Polymer(introControl);
-	</script>
+        }
+        Polymer(introControl);
+    </script>
 </dom-module>
