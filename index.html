@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <link rel="icon" href="/images/favicon.ico">
 
-    <script src="src/compatibility.js" async></script>
+    <!-- <script src="src/compatibility.js" async></script> -->
 
     <!-- See https://goo.gl/OOhYW5 -->
     <link rel="manifest" href="/manifest.json">
@@ -62,8 +62,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         // Load webcomponentsjs polyfill if browser does not support native
         // Web Components
-        ((() => {
-            const onload = () => {
+        (function() {
+            const onload = function() {
                 // For native Imports, manually fire WebComponentsReady so user code
                 // can use the same code path for native and polyfill'd imports.
                 if (!window.HTMLImports) {
@@ -91,11 +91,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             } else {
                 onload();
             }
-        }))();
+        })();
 
         // Load pre-caching Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
+            window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/service-worker.js');
             });
         }
