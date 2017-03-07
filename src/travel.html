@@ -35,23 +35,10 @@ Traveling
         min-height: 100%;
       }
 
-      .img1 {
-        background: url('https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg') no-repeat center fixed;
-        background-size: cover;
-      }
-
-      .img2 {
-        background: url('https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg') no-repeat center fixed;
-        background-size: cover;
-      }
-
-      .img3 {
-        background: url('https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg') no-repeat center fixed;
-        background-size: cover;
-      }
-
-      .img4 {
-        background: url('https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg') no-repeat center fixed;
+      .img {
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
         background-size: cover;
       }
 
@@ -116,77 +103,83 @@ Traveling
     </style>
 
 
-
-    <div class="bg_container fill">
-  		<div class="bg img4 fill"></div>
-  		<div class="bg img3 fill"></div>
-  		<div class="bg img2 fill"></div>
-  		<div class="bg img1 fill"></div>
-
-  		<div class="bg filter fill"></div>
-
-  		<div class="scroll_hint">
-  			<span>Scroll down</span>
-  		</div>
-
-  		<div class="prologue_box">
-        <div class="bleed"></div>
-  			<div class="prologue text_fadeout">
-  				<p id="fadein0" class="fadein">
-  				</p>
-  				<p id="fadein1" class="fadein">
-  					I still don&#39;t know where this flight will take me.
-  				</p>
-  				<p id="fadein2" class="fadein">
-  					I still don&#39;t know where this road will lead me.
-  				</p>
-  				<p id="fadein3" class="fadein">
-  					But one thing I know for sure,
-  				</p>
-  				<p id="fadein4" class="fadein">
-  					This will change my life forever.
-  				</p>
-  				<p id="fadein5" class="fadein">
-  				</p>
-  				<p id="fadein6" class="fadein">
-  				</p>
-  				<p id="fadein7" class="fadein">
-  				</p>
-  				<p id="fadein8" class="fadein">
-  					The night before I left Taiwan, I asked myself over and over again if I have to do this. Yeah, first time being a backpacker. First time traveling alone. First time speaking English. And first time doing everything on my own without any help from travel
-  					agencies.
-  				</p>
-  			</div>
-        <div class="bleed"></div>
-
-  		</div>
-  	</div>
-
-
     <firebase-app
-    name="data"
+    name="travel"
     auth-domain="simon-cheng-1f786.firebaseapp.com"
     database-url="https://simon-cheng-1f786.firebaseio.com/"
     api-key="AIzaSyDLC2pZ8gUAxVBJInHk0MFVjQzUsuzTI-g">
     </firebase-app>
 
 
+    <div class="bg_container fill">
 
-  	<div class="text text_fadeout" on-tap="tap_content">
+      <firebase-query id="query" app-name="travel" path="/background" data="{{background}}"></firebase-query>
+      <template is="dom-repeat" items="{{background}}" as="bg">
+        {{jsonStringify_bg(bg)}}
+      </template>
+    <div class="bg_content"></div>
 
-      <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+    <div class="bg filter fill"></div>
 
-  		<div class="content">
-
-        <firebase-query id="query" app-name="data" path="/data/en/data" data="{{data}}" transactions-complete="transactionCompleted"></firebase-query>
-        <template is="dom-repeat" items="{{data}}" as="text">
-          {{jsonStringify(text)}}
-        </template>
-        <div class="data_content"></div>
-
+    <div class="scroll_hint">
+        <span>Scroll down</span>
     </div>
 
-    <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+    <div class="prologue_box">
+        <div class="bleed"></div>
+        <div class="prologue text_fadeout">
+            <p id="fadein0" class="fadein">
+            </p>
+            <p id="fadein1" class="fadein">
+                I still don&#39;t know where this flight will take me.
+            </p>
+            <p id="fadein2" class="fadein">
+                I still don&#39;t know where this road will lead me.
+            </p>
+            <p id="fadein3" class="fadein">
+                But one thing I know for sure,
+            </p>
+            <p id="fadein4" class="fadein">
+                This will change my life forever.
+            </p>
+            <p id="fadein5" class="fadein">
+            </p>
+            <p id="fadein6" class="fadein">
+            </p>
+            <p id="fadein7" class="fadein">
+            </p>
+            <p id="fadein8" class="fadein">
+                The night before I left Taiwan, I asked myself over and over again if I have to do
+                this. Yeah, first time being a backpacker. First time traveling alone.
+                First time speaking English. And first time doing everything on my
+                own without any help from travel agencies.
+            </p>
+        </div>
+        <div class="bleed"></div>
+
+    </div>
+    </div>
+
+
+
+
+
+
+    <div class="text text_fadeout" on-tap="tap_content">
+
+        <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+
+        <div class="content">
+
+            <firebase-query id="query" app-name="travel" path="/data/en/data" data="{{data}}"></firebase-query>
+            <template is="dom-repeat" items="{{data}}" as="text">
+              {{jsonStringify_text(text)}}
+            </template>
+            <div class="data_content"></div>
+
+        </div>
+
+        <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
 
     </div>
 
@@ -202,17 +195,25 @@ Traveling
                 this.properties = {
                     data: Object,
                     data2: Object,
-                    a: {
-                      type: Array,
-                      value: []
+                    text_loaded: {
+                        type: Array,
+                        value: []
+                    },
+                    bg_loaded: {
+                        type: Array,
+                        value: []
                     },
                     count: {
-                      type: Number,
-                      value: 1
+                        type: Number,
+                        value: 1
+                    },
+                    count_bg: {
+                        type: Number,
+                        value: 1
                     },
                     content_show: {
-                      type: Boolean,
-                      value: false
+                        type: Boolean,
+                        value: false
                     }
                 };
 
@@ -228,19 +229,43 @@ Traveling
 
             }
 
-            jsonStringify(text) {
-              this.a.push(text.$val);
-              if (this.count >= this.data.length) {
-                var el = document.createElement('div');
-                let b = this.a.reverse();
-                el.innerHTML = b.join("");
-                this.$$('.data_content').appendChild(el);
-                this.render_page();
-              };
-              this.count = this.count + 1;
+            jsonStringify_bg(bg) {
+                this.bg_loaded.push(bg.$val);
+
+                if (this.count_bg >= this.background.length) {
+                    let bg_show = this.bg_loaded.reverse();
+                    for (let i = 0; i < this.background.length; i++) {
+                        let el = document.createElement('div');
+                        el.className = "bg img img" + (this.background.length -
+                                i) +
+                            " fill";
+                        el.style.cssText = "background-image: url(" +
+                            bg_show[this.background.length - i - 1] +
+                            ")";
+                        this.$$('.bg_content').appendChild(el);
+                    }
+                };
+
+                this.count_bg = this.count_bg + 1;
             }
 
+            jsonStringify_text(text) {
+                this.text_loaded.push(text.$val);
+                if (this.count >= this.data.length) {
+                    const el = document.createElement('div');
+                    let text_show = this.text_loaded.reverse();
+                    el.innerHTML = text_show.join("");
+                    this.$$('.data_content').appendChild(el);
+                    this.render_page();
+                };
+                this.count = this.count + 1;
+            }
+
+
+
             render_page() {
+                this.scopeSubtree(this.$$('.bg_content'), true); // Applying CSS style to background container
+
 
                 // init controller
                 const controller = new ScrollMagic.Controller();
@@ -304,47 +329,50 @@ Traveling
                     .addTo(controller); // assign the scene to the controller
 
                 let trigger_hook_switch = () => {
-                  switch (true) {
-                    case window.innerWidth >= 673:
-                      pin_trigger.triggerHook(0.25);
-                      break;
-                    case window.innerWidth < 673 && window.innerWidth >= 353:
-                      pin_trigger.triggerHook(0.1);
-                      break;
-                    case window.innerWidth < 353:
-                      pin_trigger.triggerHook(0.05);
-                      break;
-                  }
+                    switch (true) {
+                        case window.innerWidth >= 673:
+                            pin_trigger.triggerHook(0.25);
+                            break;
+                        case window.innerWidth < 673 && window.innerWidth >=
+                        353:
+                            pin_trigger.triggerHook(0.1);
+                            break;
+                        case window.innerWidth < 353:
+                            pin_trigger.triggerHook(0.05);
+                            break;
+                    }
                 }
 
                 trigger_hook_switch();
-                window.onresize = () => {trigger_hook_switch()};
+                window.onresize = () => {
+                    trigger_hook_switch()
+                };
 
             }
 
 
 
             tap_content() {
-              this.content_show = !this.content_show;
-              this.show_content(this.content_show);
+                this.content_show = !this.content_show;
+                this.show_content(this.content_show);
             }
 
             bleed_hover() {
-              this.content_show = true;
-              this.show_content(this.content_show);
+                this.content_show = true;
+                this.show_content(this.content_show);
             }
 
             bleed_unhover() {
-              this.content_show = false;
-              this.show_content(this.content_show);
+                this.content_show = false;
+                this.show_content(this.content_show);
             }
 
             show_content(content_show) {
 
-              const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
-                  '.text_fadeout')
+                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
+                    '.text_fadeout')
 
-                  if (content_show) {
+                if (content_show) {
 
                     for (let text_fadeout of text_fadeout_all) {
                         TweenMax.to(text_fadeout, .4, {
@@ -355,7 +383,7 @@ Traveling
                     TweenMax.to(this.$$('.filter'), .4, {
                         opacity: 0,
                     })
-                  } else {
+                } else {
 
 
                     for (let text_fadeout of text_fadeout_all) {
@@ -367,12 +395,19 @@ Traveling
                     TweenMax.to(this.$$('.filter'), .4, {
                         opacity: 1,
                     })
-                  }
+                }
 
-              }
+            }
 
         }
 
         Polymer(scrollControl);
     </script>
 </dom-module>
+e>
+
+</dom-module>
+e> odule> e>
+
+</dom-module>
+e>
