@@ -40,6 +40,18 @@
 		}
 	</style>
 
+	<firebase-app
+	name="loading"
+	auth-domain="simon-cheng-1f786.firebaseapp.com"
+	database-url="https://simon-cheng-1f786.firebaseio.com/"
+	api-key="AIzaSyDLC2pZ8gUAxVBJInHk0MFVjQzUsuzTI-g">
+	</firebase-app>
+
+	<firebase-query id="query" app-name="loading" path="/background" data="{{background}}"></firebase-query>
+	<template is="dom-repeat" items="{{background}}" as="bg">
+		{{content(bg)}}
+	</template>
+
 	<div class="loading" hidden="{{loading_hidden}}">
 		<div class="fade">{{loading_percentage}} %</div>
 		<paper-progress class="fade" value="{{loading_percentage}}"></paper-progress>
@@ -48,7 +60,7 @@
 	<simon-travel hidden="{{travel_hidden}}"></simon-travel>
 
 	<iron-signals on-iron-signal-intro-ready="intro_ready"></iron-signals>
-	<iron-signals on-iron-signal-travel-ready="travel_ready"></iron-signals>
+	<!-- <iron-signals on-iron-signal-travel-ready="travel_ready"></iron-signals> -->
 	<!-- <iron-signals on-iron-signal-leave="intro_leave"></iron-signals> -->
 
 	</template>
@@ -80,7 +92,17 @@
 					loading_percentage: {
 						type: Number,
 						value: 0
-					}
+					},
+					items: {
+						type: Array,
+						value: [
+							'../fonts/NeilNormal.woff2', //Intro Font
+						]
+					},
+					count_bg: {
+						type: Number,
+						value: 1
+					},
 				};
 				this.intro_ready = function() {
 					this.travel_hidden = false;
@@ -95,16 +117,16 @@
 			};
 
 			ready() {
-				const items = [
-					'https://c1.staticflickr.com/1/425/31987276322_e2c3ca8f08_o.jpg', //Intro Image
-					'../fonts/NeilNormal.woff2', //Intro Font
-					'https://c1.staticflickr.com/1/500/31292096464_7fff3afb91_o.jpg', //Travel
-					'https://c1.staticflickr.com/1/639/31984481622_21f64c3316_o.jpg',
-					'https://c1.staticflickr.com/1/290/32014565831_c5018c88be_o.jpg',
-					'https://c1.staticflickr.com/1/452/32133092055_083747ced8_o.jpg'
-				];
-				this.load(items);
+				// console.log(this.intro_bg);
 			};
+
+			content(bg) {
+				this.items.push(bg.$val);
+				if (this.count_bg >= this.background.length) {
+					this.load(this.items);
+				}
+				this.count_bg = this.count_bg + 1;
+			}
 
 			load(items) {
 
@@ -134,7 +156,7 @@
 									this.loading_hidden = true;
 									this.fire('iron-signal', {
 										name: "loading-complete",
-										data: null
+										data: this.items
 									});
 								},
 								onCompleteScope: this

@@ -113,10 +113,6 @@ Traveling
 
     <div class="bg_container fill">
 
-      <firebase-query id="query" app-name="travel" path="/background" data="{{background}}"></firebase-query>
-      <template is="dom-repeat" items="{{background}}" as="bg">
-        {{jsonStringify_bg(bg)}}
-      </template>
     <div class="bg_content"></div>
 
     <div class="bg filter fill"></div>
@@ -175,13 +171,15 @@ Traveling
             <template is="dom-repeat" items="{{data}}" as="text">
               {{jsonStringify_text(text)}}
             </template>
-            <div class="data_content"></div>
-
-        </div>
-
-        <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+    <div class="data_content"></div>
 
     </div>
+
+    <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+
+    </div>
+
+    <iron-signals on-iron-signal-loading-complete="loading_complete"></iron-signals>
 
     </template>
 
@@ -214,39 +212,33 @@ Traveling
                     content_show: {
                         type: Boolean,
                         value: false
-                    }
+                    },
+                    bg_loading_complete: Boolean,
+                    text_loading_complete: Boolean,
+
                 };
-
-                // this.behaviors = [Polymer.IronResizableBehavior];
-                //
-                // this.listeners = {
-                //   'iron-resize': 'window_resize'
-                // }
-
-                // this.attached = function() {
-                //   this.async(this.notifyResize, 1);
-                // };
 
             }
 
-            jsonStringify_bg(bg) {
-                this.bg_loaded.push(bg.$val);
+            loading_complete(data) {
+                data.detail.splice(0, 2);
 
-                if (this.count_bg >= this.background.length) {
-                    let bg_show = this.bg_loaded.reverse();
-                    for (let i = 0; i < this.background.length; i++) {
-                        let el = document.createElement('div');
-                        el.className = "bg img img" + (this.background.length -
-                                i) +
-                            " fill";
-                        el.style.cssText = "background-image: url(" +
-                            bg_show[this.background.length - i - 1] +
-                            ")";
-                        this.$$('.bg_content').appendChild(el);
-                    }
-                };
+                let bg_show = data.detail.reverse();
+                for (let i = 0; i < data.detail.length; i++) {
 
-                this.count_bg = this.count_bg + 1;
+                    let el = document.createElement('div');
+                    el.className = "bg img img" + (data.detail.length -
+                            i) +
+                        " fill";
+                    el.style.cssText = "background-image: url(" +
+                        bg_show[data.detail.length - i - 1] +
+                        ")";
+                    this.$$('.bg_content').appendChild(el);
+                }
+
+                console.log('bg loading done');
+                this.bg_loading_complete = true;
+                (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
             }
 
             jsonStringify_text(text) {
@@ -256,43 +248,40 @@ Traveling
                     let text_show = this.text_loaded.reverse();
                     el.innerHTML = text_show.join("");
                     this.$$('.data_content').appendChild(el);
-                    this.render_page();
+                    console.log('text loading done');
+                    this.text_loading_complete = true;
+                    (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
                 };
                 this.count = this.count + 1;
+
             }
 
-
-
             render_page() {
-                this.scopeSubtree(this.$$('.bg_content'), true); // Applying CSS style to background container
 
+                this.scopeSubtree(this.$$('.bg_content'), true); // Applying CSS style to background container
 
                 // init controller
                 const controller = new ScrollMagic.Controller();
-                const text_fadein = Polymer.dom(this.root).querySelectorAll(
-                    '.fadein');
-                const slides = Polymer.dom(this.root).querySelectorAll(
-                    '.switch');
+                const text_fadein = Polymer.dom(this.root).querySelectorAll('.fadein');
+                const slides = Polymer.dom(this.root).querySelectorAll('.switch');
 
+                // assign the scene to the controller
                 new ScrollMagic.Scene({
-                        offset: 1
-                    })
-                    .setTween(this.$$(
-                            '.scroll_hint'),
-                        0.5, {
-                            opacity: 0
-                        })
-                    .addTo(controller); // assign the scene to the controller
+                    offset: 1
+                }).setTween(this.$$('.scroll_hint'), 0.5, {
+                    opacity: 0
+                }).addTo(controller);
 
                 for (let i = 0; i < text_fadein.length; i++) {
+
+                    // assign the scene to the controller
                     new ScrollMagic.Scene({
-                            duration: 1000,
-                            offset: 500 * i
-                        })
-                        .setTween(this.$$(`#fadein${i}`), {
-                            opacity: 1
-                        })
-                        .addTo(controller); // assign the scene to the controller
+                        duration: 1000,
+                        offset: 500 * i
+                    }).setTween(this.$$(`#fadein${i}`), {
+                        opacity: 1
+                    }).addTo(controller);
+
                 };
 
                 new ScrollMagic.Scene({
@@ -333,8 +322,7 @@ Traveling
                         case window.innerWidth >= 673:
                             pin_trigger.triggerHook(0.25);
                             break;
-                        case window.innerWidth < 673 && window.innerWidth >=
-                        353:
+                        case window.innerWidth < 673 && window.innerWidth >= 353:
                             pin_trigger.triggerHook(0.1);
                             break;
                         case window.innerWidth < 353:
@@ -404,10 +392,3 @@ Traveling
         Polymer(scrollControl);
     </script>
 </dom-module>
-e>
-
-</dom-module>
-e> odule> e>
-
-</dom-module>
-e>
