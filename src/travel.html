@@ -89,17 +89,24 @@ Traveling
         flex: 20
       }
 
-      @media (min-width:437px) {
+      @media (min-width:1081px) {
         .bleed {
           flex: 3;
         }
       }
 
-      @media (max-width: 436px) and (min-width:292px) {
+      @media (max-width: 1080px) and (min-width:292px) {
         .bleed {
           flex: 1;
         }
       }
+
+      @media (max-width:1080px) {
+        .scroll_hint, .prologue_box, .text {
+          font-size: 2vmax;
+        }
+      }
+
     </style>
 
 

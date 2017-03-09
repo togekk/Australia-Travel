@@ -25,12 +25,18 @@
 				color: #FFFFFF;
 		}
 
+		@media (max-width: 1080px) {
+			.loading {
+				font-size: 20px;
+			}
+		}
+
 		.fade {
-			opacity: .5
+			opacity: .5;
 		}
 
 		paper-progress {
-			margin-top: 2%
+			margin-top: 2%;
 			--paper-progress-active-color: #BABABA;
 			--paper-progress-container-color: #000;
 		}
@@ -66,13 +72,6 @@
 	</template>
 
 	<script>
-		// window.addEventListener("WebComponentsReady", function (e) {
-		// 	console.log(document.querySelector("simon-intro"));
-		// 		// document.querySelector("simon-intro").fooSignal = function () {
-		// 		//  	console.log('OK');
-		// 		// 	};
-		// 	});
-
 		class mainControl extends HTMLElement {
 			beforeRegister() {
 				this.is = 'simon-app';
