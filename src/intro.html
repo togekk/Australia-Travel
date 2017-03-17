@@ -39,6 +39,7 @@
     .pre {
       text-align: center;
       cursor: default;
+      opacity: 0;
     }
 
 		.pre h2 {
@@ -71,10 +72,6 @@
 
 		paper-button[disabled] {
 			background: transparent;
-		}
-
-		.pre {
-			opacity: 0;
 		}
 
 		.enter {
@@ -125,15 +122,15 @@
 			}
 
       .pre h2 {
-        font-size: 1.3vmax;
+        font-size: 1.8vmax;
       }
 
       .name h1 {
-        font-size: 7vmax;
+        font-size: 9vmax;
       }
 
       .enter {
-        font-size: 1vmax;
+        font-size: 1.5vmax;
       }
 		}
 
@@ -172,99 +169,77 @@
 	</template>
 
     <script>
-        class introControl extends HTMLElement {
-            beforeRegister() {
-                this.is = 'simon-intro';
-                this.properties = {
-                    disabled: {
-                        type: Boolean,
-                        value: true
-                    }
-                };
-            }
+      class introControl extends HTMLElement {
+        beforeRegister() {
+            this.is = 'simon-intro';
+            this.properties = {
+                disabled: {
+                    type: Boolean,
+                    value: true
+                }
+            };
+        }
 
-            ready() {
-                // this.width = window.innerWidth;
-            }
+        ready() {
+            // this.width = window.innerWidth;
+        }
 
-            loading_complete(data) {
+        loading_complete(data) {
 
-                let intro_bg = data.detail[1];
-                console.log(intro_bg);
-                this.$$('.intro').style.backgroundImage = "url(" + intro_bg + ")"
+          let intro_bg = data.detail[1];
+          this.$$('.intro').style.backgroundImage = `url(${intro_bg})`
 
-                TweenMax.fromTo(this.$$('.pre'), 1, {
-                    opacity: 0,
-                    y: 20
-                }, {
-                    opacity: 1,
-                    y: 0,
-                    ease: Power2.easeOut
-                }).delay(1);
-                TweenMax.fromTo(this.$$('.name'), 1, {
-                    opacity: 0,
-                    y: 20
-                }, {
-                    opacity: 1,
-                    y: 0,
-                    ease: Power2.easeOut
-                }).delay(2);
-                TweenMax.fromTo(this.$$('.enter'), .3, {
-                    opacity: 0,
-                    x: 5
-                }, {
-                    opacity: 1,
-                    x: 0,
-                    ease: Power2.easeOut,
-                    onComplete() {
-                        this.disabled = false;
-                    },
-                    onCompleteScope: this
-                }).delay(4);
+          if (waapi) {
 
-            }
+            let animation = { opacity: [0, 1], transform: ['translateY(20px)', 'translateY(0)'] };
+            let ease = { easing: 'cubic-bezier(0, .5, .5, 1)', fill: 'forwards' };
+            this.$$('.pre').animate(animation, Object.assign({ duration: 1000, delay: 4000 }, ease));
+            this.$$('.name').animate(animation, Object.assign({ duration: 1000, delay: 5000 }, ease));
+            let enter_animation = this.$$('.enter').animate({ opacity: [0, 1], transform: ['translateX(5px)', 'translateX(0)'] },
+              Object.assign({ duration: 300, delay: 7000 }, ease));
+            enter_animation.onfinish = () => {
+                this.disabled = false;
+            };
 
-            leave() {
-                TweenMax.fromTo(this.$$('.pre'), .7, {
-                    opacity: 1,
-                    y: 0
-                }, {
-                    opacity: 0,
-                    y: -10,
-                    ease: Power2.easeIn,
-                    onComplete() {
-                        // console.log('firing signal');
-                        this.fire('iron-signal', {
-                            name: "intro-ready",
-                            data: null
-                        });
-                    },
-                    onCompleteScope: this
-                });
-                TweenMax.fromTo(this.$$('.name'), .5, {
-                    opacity: 1,
-                    y: 0
-                }, {
-                    opacity: 0,
-                    y: -10,
-                    ease: Power2.easeIn
-                });
-                TweenMax.fromTo(this.$$('.enter'), .3, {
-                    opacity: 1,
-                    x: 0
-                }, {
-                    opacity: 0,
-                    x: -5,
-                    ease: Power2.easeIn,
-                    onComplete() {
-                        this.disabled = true;
-                    },
-                    onCompleteScope: this
-                });
+          } else {
 
-            }
+            TweenMax.fromTo(this.$$('.pre'), 1, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: Power2.easeOut }).delay(4);
+            TweenMax.fromTo(this.$$('.name'), 1, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: Power2.easeOut }).delay(5);
+            TweenMax.fromTo(this.$$('.enter'), .3, { opacity: 0, x: 5 }, { opacity: 1, x: 0, ease: Power2.easeOut,
+              onComplete() { this.disabled = false }, onCompleteScope: this }).delay(7);
+
+          }
 
         }
-        Polymer(introControl);
+
+        leave() {
+          this.fire('iron-signal', {
+              name: "intro-ready",
+              data: null
+          });
+
+          if (waapi) {
+
+            this.disabled = true;
+            let animation = { opacity: [1, 0], transform: ['translateY(0)', 'translateY(-10px)'] };
+            let ease = { easing: 'cubic-bezier(.5, 0, .5, 0)', fill: 'forwards' };
+            this.$$('.pre').animate(animation, Object.assign({ duration: 700 }, ease));
+            this.$$('.name').animate(animation, Object.assign({ duration: 500 }, ease));
+            this.$$('.enter').animate({ opacity: [1, 0], transform: ['translateX(0)', 'translateX(-5px)'] },
+              Object.assign({ duration: 300 }, ease));
+
+          } else {
+
+            this.disabled = true;
+            TweenMax.fromTo(this.$$('.pre'), .7, { opacity: 1, y: 0 }, { opacity: 0, y: -10, ease: Power2.easeIn, });
+            TweenMax.fromTo(this.$$('.name'), .5, { opacity: 1, y: 0 }, { opacity: 0, y: -10, ease: Power2.easeIn });
+            TweenMax.fromTo(this.$$('.enter'), .3, { opacity: 1, x: 0 }, { opacity: 0, x: -5, ease: Power2.easeIn });
+
+          }
+
+        }
+      }
+
+      Polymer(introControl);
     </script>
 </dom-module>

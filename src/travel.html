@@ -120,16 +120,18 @@ Traveling
 
     <div class="bg_container fill">
 
-    <div class="bg_content"></div>
+      <div class="bg_content"></div>
 
-    <div class="bg filter fill"></div>
+      <div class="bg filter fill"></div>
 
-    <div class="scroll_hint">
-        <span>Scroll down</span>
-    </div>
+      <div class="scroll_hint">
+          <span>Scroll down</span>
+      </div>
 
-    <div class="prologue_box">
+      <div class="prologue_box">
+
         <div class="bleed"></div>
+
         <div class="prologue text_fadeout">
             <p id="fadein0" class="fadein">
             </p>
@@ -158,29 +160,25 @@ Traveling
                 own without any help from travel agencies.
             </p>
         </div>
+
         <div class="bleed"></div>
 
+      </div>
     </div>
-    </div>
-
-
-
-
-
 
     <div class="text text_fadeout" on-tap="tap_content">
 
-        <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
+      <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
 
-        <div class="content">
+      <div class="content">
 
-            <firebase-query id="query" app-name="travel" path="/data/en/data" data="{{data}}"></firebase-query>
-            <template is="dom-repeat" items="{{data}}" as="text">
-              {{jsonStringify_text(text)}}
-            </template>
-    <div class="data_content"></div>
+        <firebase-query id="query" app-name="travel" path="/data/en/data" data="{{data}}"></firebase-query>
+        <template is="dom-repeat" items="{{data}}" as="text">
+          {{jsonStringify_text(text)}}
+        </template>
+        <div class="data_content"></div>
 
-    </div>
+      </div>
 
     <div class="bleed" on-mouseover="bleed_hover" on-mouseout="bleed_unhover"></div>
 
@@ -191,211 +189,252 @@ Traveling
     </template>
 
     <script>
-        class scrollControl extends HTMLElement {
+      class scrollControl extends HTMLElement {
 
-            beforeRegister() {
+        beforeRegister() {
 
-                this.is = 'simon-travel';
+            this.is = 'simon-travel';
 
-                this.properties = {
-                    data: Object,
-                    data2: Object,
-                    text_loaded: {
-                        type: Array,
-                        value: []
-                    },
-                    bg_loaded: {
-                        type: Array,
-                        value: []
-                    },
-                    count: {
-                        type: Number,
-                        value: 1
-                    },
-                    count_bg: {
-                        type: Number,
-                        value: 1
-                    },
-                    content_show: {
-                        type: Boolean,
-                        value: false
-                    },
-                    bg_loading_complete: Boolean,
-                    text_loading_complete: Boolean,
-
-                };
-
-            }
-
-            loading_complete(data) {
-                data.detail.splice(0, 2);
-
-                let bg_show = data.detail.reverse();
-                for (let i = 0; i < data.detail.length; i++) {
-
-                    let el = document.createElement('div');
-                    el.className = "bg img img" + (data.detail.length -
-                            i) +
-                        " fill";
-                    el.style.cssText = "background-image: url(" +
-                        bg_show[data.detail.length - i - 1] +
-                        ")";
-                    this.$$('.bg_content').appendChild(el);
+            this.properties = {
+                data: Object,
+                data2: Object,
+                text_loaded: {
+                    type: Array,
+                    value: []
+                },
+                bg_loaded: {
+                    type: Array,
+                    value: []
+                },
+                count: {
+                    type: Number,
+                    value: 1
+                },
+                count_bg: {
+                    type: Number,
+                    value: 1
+                },
+                content_show: {
+                    type: Boolean,
+                    value: false
+                },
+                bg_loading_complete: Boolean,
+                text_loading_complete: Boolean,
+                trigger: {
+                  type: Object,
+                  value: {}
+                },
+                trigger_events: {
+                  type: Array,
+                  value: []
                 }
 
-                console.log('bg loading done');
-                this.bg_loading_complete = true;
+            };
+
+        }
+
+        loading_complete(data) {
+            data.detail.splice(0, 2);
+
+            let bg_show = data.detail.reverse();
+            for (let i = 0; i < data.detail.length; i++) {
+
+                let el = document.createElement('div');
+                el.className = `bg img img${data.detail.length - i} fill`;
+                el.style.cssText = `background-image: url(${bg_show[data.detail.length - i - 1]})`;
+                this.$$('.bg_content').appendChild(el);
+            }
+
+            console.log('bg loading done');
+            this.bg_loading_complete = true;
+            (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
+        }
+
+        jsonStringify_text(text) {
+            this.text_loaded.push(text.$val);
+            if (this.count >= this.data.length) {
+                const el = document.createElement('div');
+                let text_show = this.text_loaded.reverse();
+                el.innerHTML = text_show.join("");
+                this.$$('.data_content').appendChild(el);
+                console.log('text loading done');
+                this.text_loading_complete = true;
                 (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
-            }
+            };
+            this.count = this.count + 1;
 
-            jsonStringify_text(text) {
-                this.text_loaded.push(text.$val);
-                if (this.count >= this.data.length) {
-                    const el = document.createElement('div');
-                    let text_show = this.text_loaded.reverse();
-                    el.innerHTML = text_show.join("");
-                    this.$$('.data_content').appendChild(el);
-                    console.log('text loading done');
-                    this.text_loading_complete = true;
-                    (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
-                };
-                this.count = this.count + 1;
+        }
 
-            }
+        render_page() {
 
-            render_page() {
+            this.scopeSubtree(this.$$('.bg_content'), true); // Applying CSS style to background container
 
-                this.scopeSubtree(this.$$('.bg_content'), true); // Applying CSS style to background container
+            // init controller
+            const controller = new ScrollMagic.Controller();
+            const text_fadein = Polymer.dom(this.root).querySelectorAll('.fadein');
+            const slides = Polymer.dom(this.root).querySelectorAll('.switch');
 
-                // init controller
-                const controller = new ScrollMagic.Controller();
-                const text_fadein = Polymer.dom(this.root).querySelectorAll('.fadein');
-                const slides = Polymer.dom(this.root).querySelectorAll('.switch');
+            this.trigger_events.push({ trigger_element: this.$$('.text'), animating_element: this.$$('.scroll_hint'), trigger: "scroll_hint", duration: 100, trigger_position: -1, reverse: true });
 
+            // assign the scene to the controller
+            // new ScrollMagic.Scene({ offset: 1 }).setTween(this.$$('.scroll_hint'), 0.5, { opacity: 0 }).addTo(controller);
+
+            for (let i = 0; i < text_fadein.length; i++) {
                 // assign the scene to the controller
-                new ScrollMagic.Scene({
-                    offset: 1
-                }).setTween(this.$$('.scroll_hint'), 0.5, {
-                    opacity: 0
-                }).addTo(controller);
+                // new ScrollMagic.Scene({ duration: 1000, offset: 500 * i }).setTween(this.$$(`#fadein${i}`), { opacity: 1 }).addTo(controller);
+                this.trigger_events.push({ trigger_element: this.$$('.text'), animating_element: this.$$(`#fadein${i}`), trigger: `fadein[${i}]`, duration: 700, trigger_position: 0 - 500 * i });
+            };
 
-                for (let i = 0; i < text_fadein.length; i++) {
+            // assign the scene to the controller
+            // new ScrollMagic.Scene({ triggerElement: this.$$('.content') }).setTween(this.$$('.prologue_box'), 0.5, { opacity: 0 }).addTo(controller);
+            this.trigger_events.push({ trigger_element: this.$$('.content'), animating_element: this.$$('.prologue_box'), trigger: "content", duration: 200, trigger_position: 0, reverse: true });
 
-                    // assign the scene to the controller
-                    new ScrollMagic.Scene({
-                        duration: 1000,
-                        offset: 500 * i
-                    }).setTween(this.$$(`#fadein${i}`), {
-                        opacity: 1
-                    }).addTo(controller);
 
-                };
+            let j = 1;
+            this.trigger.slide = [];
+            this.trigger.fadein = [];
 
-                new ScrollMagic.Scene({
-                        triggerElement: this.$$('.content'),
-                    })
-                    .setTween(this.$$('.prologue_box'),
-                        0.5, {
-                            opacity: 0
-                        })
-                    .addTo(controller); // assign the scene to the controller
+            for (let slide of slides) {
+              this.trigger_events.push({ trigger_element: slide, animating_element: this.$$(`.img${j}`), trigger: `slide[${j-1}]`, duration: 200, trigger_position: 300, reverse: true })
+              j = j + 1;
+            };
 
-                let j = 1;
+                // create a scene
+                // new ScrollMagic.Scene({ triggerElement: slide, duration: 300, })
+                //     .setTween(this.$$(`.img${j}`), { opacity: 0 }) // pins the element for the the scene's duration
+                //     .addTo(controller); // assign the scene to the controller
 
-                for (let slide of slides) {
-                    // create a scene
-                    new ScrollMagic.Scene({
-                            triggerElement: slide,
-                            duration: 300,
-                            // offset: 50
-                        })
-                        .setTween(this.$$(`.img${j}`), {
-                            opacity: 0
-                        }) // pins the element for the the scene's duration
-                        .addTo(controller); // assign the scene to the controller
-                    j = j + 1;
-                };
+            let pin_trigger = new ScrollMagic.Scene({ triggerElement: this.$$('.pin_trigger'), duration: 2000 })
+                                  .setPin(this.$$('.pin_point'))
+                                  .addTo(controller); // assign the scene to the controller
 
-                let pin_trigger = new ScrollMagic.Scene({
-                        triggerElement: this.$$('.pin_trigger'),
-                        // triggerHook: 0.25,
-                        duration: 500
-                    })
-                    .setPin(this.$$('.pin_point'))
-                    .addTo(controller); // assign the scene to the controller
-
-                let trigger_hook_switch = () => {
-                    switch (true) {
-                        case window.innerWidth >= 673:
-                            pin_trigger.triggerHook(0.25);
-                            break;
-                        case window.innerWidth < 673 && window.innerWidth >= 353:
-                            pin_trigger.triggerHook(0.1);
-                            break;
-                        case window.innerWidth < 353:
-                            pin_trigger.triggerHook(0.05);
-                            break;
-                    }
+            let trigger_hook_switch = () => {
+                switch (true) {
+                    case window.innerWidth >= 673:
+                        pin_trigger.triggerHook(0.25);
+                        break;
+                    case window.innerWidth < 673 && window.innerWidth >= 353:
+                        pin_trigger.triggerHook(0.1);
+                        break;
+                    case window.innerWidth < 353:
+                        pin_trigger.triggerHook(0.05);
+                        break;
                 }
-
-                trigger_hook_switch();
-                window.onresize = () => {
-                    trigger_hook_switch()
-                };
-
             }
 
+            trigger_hook_switch();
+            window.onresize = () => {
+                trigger_hook_switch()
+            };
+
+            window.onscroll = () => {for (let trigger_event of this.trigger_events) this.execute_scroll_event(trigger_event)};
+
+        }
 
 
-            tap_content() {
-                this.content_show = !this.content_show;
-                this.show_content(this.content_show);
+
+        execute_scroll_event(trigger_event) {
+          let opacity;
+          let a;
+
+          // console.log(trigger_event.trigger, trigger_event.trigger_element.getBoundingClientRect().top);
+          // if (trigger_event.trigger_element.getBoundingClientRect().top < trigger_event.trigger_position) {
+          if (trigger_event.reverse) {
+            a = 1 - ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / trigger_event.duration);
+          } else {
+            a = (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / trigger_event.duration;
+          }
+          trigger_event.animating_element.style.opacity = a;
+          trigger_event.trigger == "slide[0]" && console.log(trigger_event.trigger, a);
+          // console.log(trigger_event.trigger, a);
+
+          // console.log(trigger_event.trigger, (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000);
+          if (trigger_event.trigger_element.getBoundingClientRect().top < trigger_event.trigger_position) {
+            if (!eval("this.trigger." + trigger_event.trigger)) {
+              // if ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000 >= 1) {
+                // console.log(trigger_event.trigger + "reached the top");
+                eval("this.trigger." + trigger_event.trigger + " = true");
+              // };
+          //     // console.log(trigger_event.trigger, trigger_event.animating_element.style.opacity);
+          //     // trigger_event.animating_element.animate({ opacity: opacity }, { duration: trigger_event.duration, fill: 'forwards' });
             }
 
-            bleed_hover() {
-                this.content_show = true;
-                this.show_content(this.content_show);
+          } else {
+
+            if (eval("this.trigger." + trigger_event.trigger)) {
+              // trigger_event.animating_element.style.opacity = (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000;
+              // trigger_event.animating_element.animate({ opacity: opacity }, { duration: trigger_event.duration, fill: 'forwards' });
+              // if ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000 >= 1) {
+                // console.log(trigger_event.trigger + " not reached the top");
+                eval("this.trigger." + trigger_event.trigger + " = false");
+              // };
+              // eval("this.trigger." + trigger_event.trigger + " = false");
             }
 
-            bleed_unhover() {
-                this.content_show = false;
-                this.show_content(this.content_show);
-            }
+          }
+        }
 
-            show_content(content_show) {
+        tap_content() {
+            this.content_show = !this.content_show;
+            this.show_content(this.content_show);
+        }
 
-                const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
-                    '.text_fadeout')
+        bleed_hover() {
+            this.content_show = true;
+            this.show_content(this.content_show);
+        }
 
-                if (content_show) {
+        bleed_unhover() {
+            this.content_show = false;
+            this.show_content(this.content_show);
+        }
 
-                    for (let text_fadeout of text_fadeout_all) {
-                        TweenMax.to(text_fadeout, .4, {
-                            opacity: 0.1,
-                        })
-                    }
+        show_content(content_show) {
 
-                    TweenMax.to(this.$$('.filter'), .4, {
-                        opacity: 0,
-                    })
-                } else {
+            const text_fadeout_all = Polymer.dom(this.root).querySelectorAll(
+                '.text_fadeout')
 
+            if (content_show) {
 
-                    for (let text_fadeout of text_fadeout_all) {
-                        TweenMax.to(text_fadeout, .4, {
-                            opacity: 1,
-                        })
-                    }
+              if (waapi) {
 
-                    TweenMax.to(this.$$('.filter'), .4, {
-                        opacity: 1,
-                    })
+                for (let text_fadeout of text_fadeout_all) {
+                    text_fadeout.animate({ opacity: [1, .1] }, { duration: 400, fill: 'forwards' })
                 }
+                this.$$('.filter').animate({ opacity: [1, 0] }, { duration: 400, fill: 'forwards' })
+
+              } else {
+
+                  for (let text_fadeout of text_fadeout_all) {
+                    TweenMax.to(text_fadeout, .4, { opacity: .1 })
+                  }
+                  TweenMax.to(this.$$('.filter'), .4, { opacity: 0 })
+
+              };
+
+            } else {
+
+              if (waapi) {
+
+                for (let text_fadeout of text_fadeout_all) {
+                  text_fadeout.animate({ opacity: [.1, 1] }, { duration: 400, fill: 'forwards' })
+                }
+                this.$$('.filter').animate({ opacity: [0, 1] }, { duration: 400, fill: 'forwards' })
+
+              } else {
+
+                for (let text_fadeout of text_fadeout_all) {
+                  TweenMax.to(text_fadeout, .4, { opacity: 1 })
+                }
+                TweenMax.to(this.$$('.filter'), .4, { opacity: 1 })
+
+              }
 
             }
 
         }
+      }
 
-        Polymer(scrollControl);
+      Polymer(scrollControl);
     </script>
 </dom-module>
