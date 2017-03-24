@@ -24,6 +24,9 @@ Traveling
       .bg_container {
         overflow: auto;
         position: fixed;
+        display: grid;
+        grid-template-columns: 20% auto 20%;
+        grid-template-rows: auto;
       }
 
       .bg {
@@ -102,7 +105,7 @@ Traveling
       }
 
       @media (max-width:1080px) {
-        .scroll_hint, .prologue_box, .text {
+        .bg_container, .text {
           font-size: 2vmax;
         }
       }
@@ -161,9 +164,11 @@ Traveling
             </p>
         </div>
 
+
         <div class="bleed"></div>
 
       </div>
+
     </div>
 
     <div class="text text_fadeout" on-tap="tap_content">
@@ -256,7 +261,17 @@ Traveling
                 const el = document.createElement('div');
                 let text_show = this.text_loaded.reverse();
                 el.innerHTML = text_show.join("");
+                const abc = el.querySelector('.pin_point');
+
+                this.$$('.bg_container').appendChild(abc);
+                this.$$('.pin_point').style.color = "#FFFFFF";
+                this.$$('.pin_point').style.gridColumn = "2 / 3";
+                this.$$('.pin_point').style.alignSelf = "center";
+                this.$$('.pin_point').style.opacity = "0";
+
                 this.$$('.data_content').appendChild(el);
+                this.$$('.pin_trigger').style.height = "2000px";
+
                 console.log('text loading done');
                 this.text_loading_complete = true;
                 (this.bg_loading_complete && this.text_loading_complete) && this.render_page();
@@ -276,19 +291,11 @@ Traveling
 
             this.trigger_events.push({ trigger_element: this.$$('.text'), animating_element: this.$$('.scroll_hint'), trigger: "scroll_hint", duration: 100, trigger_position: -1, reverse: true });
 
-            // assign the scene to the controller
-            // new ScrollMagic.Scene({ offset: 1 }).setTween(this.$$('.scroll_hint'), 0.5, { opacity: 0 }).addTo(controller);
-
             for (let i = 0; i < text_fadein.length; i++) {
-                // assign the scene to the controller
-                // new ScrollMagic.Scene({ duration: 1000, offset: 500 * i }).setTween(this.$$(`#fadein${i}`), { opacity: 1 }).addTo(controller);
                 this.trigger_events.push({ trigger_element: this.$$('.text'), animating_element: this.$$(`#fadein${i}`), trigger: `fadein[${i}]`, duration: 700, trigger_position: 0 - 500 * i });
             };
 
-            // assign the scene to the controller
-            // new ScrollMagic.Scene({ triggerElement: this.$$('.content') }).setTween(this.$$('.prologue_box'), 0.5, { opacity: 0 }).addTo(controller);
             this.trigger_events.push({ trigger_element: this.$$('.content'), animating_element: this.$$('.prologue_box'), trigger: "content", duration: 200, trigger_position: 0, reverse: true });
-
 
             let j = 1;
             this.trigger.slide = [];
@@ -299,33 +306,8 @@ Traveling
               j = j + 1;
             };
 
-                // create a scene
-                // new ScrollMagic.Scene({ triggerElement: slide, duration: 300, })
-                //     .setTween(this.$$(`.img${j}`), { opacity: 0 }) // pins the element for the the scene's duration
-                //     .addTo(controller); // assign the scene to the controller
-
-            let pin_trigger = new ScrollMagic.Scene({ triggerElement: this.$$('.pin_trigger'), duration: 2000 })
-                                  .setPin(this.$$('.pin_point'))
-                                  .addTo(controller); // assign the scene to the controller
-
-            let trigger_hook_switch = () => {
-                switch (true) {
-                    case window.innerWidth >= 673:
-                        pin_trigger.triggerHook(0.25);
-                        break;
-                    case window.innerWidth < 673 && window.innerWidth >= 353:
-                        pin_trigger.triggerHook(0.1);
-                        break;
-                    case window.innerWidth < 353:
-                        pin_trigger.triggerHook(0.05);
-                        break;
-                }
-            }
-
-            trigger_hook_switch();
-            window.onresize = () => {
-                trigger_hook_switch()
-            };
+            this.trigger_events.push({ trigger_element: this.$$('.pin_trigger'), animating_element: this.$$('.pin_point'), trigger: "pin_start", duration: 200, trigger_position: 300 });
+            this.trigger_events.push({ trigger_element: this.$$('.pin_end'), animating_element: this.$$('.pin_point'), trigger: "pin_end", duration: 200, trigger_position: 800, reverse: true });
 
             window.onscroll = () => {for (let trigger_event of this.trigger_events) this.execute_scroll_event(trigger_event)};
 
@@ -337,38 +319,24 @@ Traveling
           let opacity;
           let a;
 
-          // console.log(trigger_event.trigger, trigger_event.trigger_element.getBoundingClientRect().top);
-          // if (trigger_event.trigger_element.getBoundingClientRect().top < trigger_event.trigger_position) {
           if (trigger_event.reverse) {
-            a = 1 - ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / trigger_event.duration);
+            if (trigger_event.trigger !== "pin_end" || trigger_event.animating_element.style.opacity > 1) {
+              a = 1 - ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / trigger_event.duration);
+            }
           } else {
             a = (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / trigger_event.duration;
           }
           trigger_event.animating_element.style.opacity = a;
-          trigger_event.trigger == "slide[0]" && console.log(trigger_event.trigger, a);
-          // console.log(trigger_event.trigger, a);
 
-          // console.log(trigger_event.trigger, (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000);
           if (trigger_event.trigger_element.getBoundingClientRect().top < trigger_event.trigger_position) {
             if (!eval("this.trigger." + trigger_event.trigger)) {
-              // if ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000 >= 1) {
-                // console.log(trigger_event.trigger + "reached the top");
                 eval("this.trigger." + trigger_event.trigger + " = true");
-              // };
-          //     // console.log(trigger_event.trigger, trigger_event.animating_element.style.opacity);
-          //     // trigger_event.animating_element.animate({ opacity: opacity }, { duration: trigger_event.duration, fill: 'forwards' });
             }
 
           } else {
 
             if (eval("this.trigger." + trigger_event.trigger)) {
-              // trigger_event.animating_element.style.opacity = (trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000;
-              // trigger_event.animating_element.animate({ opacity: opacity }, { duration: trigger_event.duration, fill: 'forwards' });
-              // if ((trigger_event.trigger_position - trigger_event.trigger_element.getBoundingClientRect().top) / 1000 >= 1) {
-                // console.log(trigger_event.trigger + " not reached the top");
                 eval("this.trigger." + trigger_event.trigger + " = false");
-              // };
-              // eval("this.trigger." + trigger_event.trigger + " = false");
             }
 
           }
